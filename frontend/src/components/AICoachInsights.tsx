@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { LifestyleProfile, FootprintBreakdown } from "@/types";
 import { estimateTipSavings } from "@/lib/calculator";
 
@@ -21,7 +21,7 @@ export default function AICoachInsights({ profile, breakdown }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"auto" | "force-ai" | "force-local">("auto");
 
-  const fetchInsights = async () => {
+  const fetchInsights = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -51,12 +51,12 @@ export default function AICoachInsights({ profile, breakdown }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [profile, breakdown, mode]);
 
   // fetch on mount and whenever the mode changes
   useEffect(() => {
     fetchInsights();
-  }, [profile, breakdown, mode]);
+  }, [fetchInsights]);
 
   if (loading) {
     return (
@@ -100,7 +100,7 @@ export default function AICoachInsights({ profile, breakdown }: Props) {
 
       {/* Relatable Analogy */}
       <p style={{ color: "var(--text-primary)", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: 20, fontStyle: "italic" }}>
-        "{insight.analogy}"
+        &ldquo;{insight.analogy}&rdquo;
       </p>
 
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>

@@ -2,13 +2,12 @@
 let redisClient: any = null;
 let memoryMap: Map<string, { count: number; lastReset: number }> | null = new Map();
 
-function getRedis() {
+async function getRedis() {
   if (redisClient) return redisClient;
   const url = process.env.REDIS_URL;
   if (!url) return null;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const IORedis = require("ioredis");
+    const IORedis = (await import("ioredis")).default;
     redisClient = new IORedis(url);
     // clear memory fallback when using redis
     memoryMap = null;
@@ -29,7 +28,7 @@ function getRedis() {
  * @param windowMs Window length in milliseconds
  */
 export async function isRateLimited(ip: string, scopeKey = "global", max = 60, windowMs = 60000): Promise<boolean> {
-  const redis = getRedis();
+  const redis = await getRedis();
   const key = `rate:${scopeKey}:${ip}`;
 
   if (redis) {
@@ -65,4 +64,5 @@ export function resetMemoryRateLimits() {
   if (memoryMap) memoryMap.clear();
 }
 
-export default { isRateLimited, resetMemoryRateLimits };
+const rateLimiter = { isRateLimited, resetMemoryRateLimits };
+export default rateLimiter;

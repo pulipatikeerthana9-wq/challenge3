@@ -31,8 +31,8 @@
   --text-muted:     #4b7a5a;
 
   /* Fonts */
-  --font-sans:   'Inter', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', sans-serif;
+  --font-sans:   var(--font-sans-next), 'Inter', system-ui, sans-serif;
+  --font-display: var(--font-display-next), 'Space Grotesk', sans-serif;
 
   /* Spacing */
   --radius-sm: 8px;
