@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     // 3. Optional integration with Gemini Developer API for AI-powered Parsing
     if (useAi) {
       try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
         const response = await fetch(geminiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -89,6 +89,9 @@ Return ONLY valid JSON without markdown formatting. Example output: {"commute_mo
           const textResponse = resJson?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
           changes = JSON.parse(textResponse.trim());
           isAiParsed = true;
+        } else {
+          const errText = await response.text().catch(() => "unknown error");
+          console.error("Gemini API returned error status:", response.status, errText);
         }
       } catch (geminiErr) {
         console.error("Gemini API call failed, falling back to deterministic NLP parser:", geminiErr);
